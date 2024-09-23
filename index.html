@@ -5,6 +5,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
     <title>SHA-256 Hasher & Bitcoin Address Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -29,7 +30,7 @@
             border-radius: 12px;
             max-width: 700px;
             width: 90%;
-            margin: 20px auto 20px auto;
+            margin: 20px auto;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
@@ -116,25 +117,29 @@
             background-color: hwb(62 65% 6%);
             padding: 10px 60px;
             text-align: center;
-            border-top: 1px solid #e2e8f0;
-            margin-top: auto;
+            border-top: 2px solid blue;
+            border-bottom: 2px solid blue;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            border-top: 2px solid blue;
-            border-bottom: 2px solid blue;
+            width: 100%;
         }
 
         header .header-left {
             font-size: 1em;
             color: #555;
-            margin-bottom: 0px;
+            margin-bottom: 10px; /* Adjusted margin for better spacing */
+            width: 100%;
+            text-align: center;
         }
 
         header .header-right {
             display: flex;
             align-items: center;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
         }
 
         header .header-right a {
@@ -159,25 +164,30 @@
             background-color: hwb(62 65% 6%);
             padding: 10px 60px;
             text-align: center;
-            border-top: 1px solid #e2e8f0;
-            margin-top: auto;
+            border-top: 2px solid blue;
+            border-bottom: 2px solid blue;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            border-top: 2px solid blue;
-            border-bottom: 2px solid blue;
+            margin-top: auto;
+            width: 100%;
         }
 
         footer .footer-left {
             font-size: 1em;
             color: #555;
-            margin-bottom: 0px;
+            margin-bottom: 10px; /* Adjusted margin for better spacing */
+            width: 100%;
+            text-align: center;
         }
 
         footer .footer-right {
             display: flex;
             align-items: center;
+            width: 100%;
+            justify-content: center;
+            margin-top: 10px;
         }
 
         footer .footer-right a {
@@ -201,24 +211,50 @@
         /* Responsive Design */
         @media (max-width: 600px) {
             .container {
-                padding: 30px 40px;
+                padding: 30px 20px; /* Reduced side padding for smaller screens */
             }
 
-            footer {
-                padding: 20px 40px;
-                flex-direction: column;
-                align-items: center;
+            header, footer {
+                padding: 10px 20px; /* Adjusted padding */
             }
 
-            footer .footer-right {
+            header .header-left, footer .footer-left {
+                font-size: 1em;
+            }
+
+            header .header-right, footer .footer-right {
                 margin-top: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em; /* Reduced font size for better fit */
+            }
+
+            label, button {
+                font-size: 1em;
+            }
+
+            input[type="text"],
+            input[type="number"] {
+                padding: 10px 14px; /* Adjusted padding */
+                font-size: 0.9em;
+            }
+
+            button {
+                padding: 12px 0;
+                font-size: 1em;
+            }
+
+            #result, #btcAddress, #btcBalance {
+                font-size: 0.9em;
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-left">🚀 Convenient & Secure BTC brainwallet generater | Works totally offline ✅</div>
+        <div class="header-left">🚀 Convenient & Secure BTC Brainwallet Generator | Works Offline ✅</div>
         <div class="header-right">
             <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" rel="noopener noreferrer">
                 <!-- GitHub Star Icon -->
@@ -256,7 +292,8 @@
     </div>
 
     <footer>
-        <div class="footer-left" style="color: black;">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:<a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" style="color: #3182ce; text-decoration: none;">
+        <div class="footer-left" style="color: black;">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:
+            <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" style="color: #3182ce; text-decoration: none;">
                 1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
             </a>
         </div>
