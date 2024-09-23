@@ -155,7 +155,7 @@ This project is licensed under the [MIT License](https://github.com/ikrahul/SHA2
 
 - **Email:** [rahulban@live.in](mailto:rahulban@live.in)
 - **GitHub:** [ikrahul](https://github.com/ikrahul)
-
+- **Support:** [1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG](bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG)
 Feel free to reach out for any queries, feedback, or collaborations!
 
 ---

@@ -250,15 +250,18 @@
 
         <button id="hashButton">Hash</button>
 
-        <div id="result">SHA-256 Hash</div>
+        <div id="result">SHA-256 Hash / Private Key</div>
         <div id="btcAddress">Bitcoin Address</div>
         <div id="btcBalance">Bitcoin Balance</div>
     </div>
 
     <footer>
-        <div class="footer-left" style="color: black;">🚀 Created with ❤️ by Rahul Ban © 2024</div>
+        <div class="footer-left" style="color: black;">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:<a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" style="color: #3182ce; text-decoration: none;">
+                1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
+            </a>
+        </div>
         <div class="footer-right">
-            <div class="github-profile-badge" data-user="ikrahul" </div>
+            <div class="github-profile-badge" data-user="ikrahul"></div>
             <script src="https://cdn.jsdelivr.net/gh/Rapsssito/github-profile-badge@latest/src/widget.min.js"></script>
         </div>
     </footer>
@@ -377,7 +380,7 @@
                 currentHash = await sha256(currentHash);
             }
 
-            resultDiv.textContent = `SHA-256 Hash:\n${currentHash}`;
+            resultDiv.textContent = `SHA-256 Hash/Private Key:\n${currentHash}`;
             generateBitcoinAddress(currentHash, btcAddressDiv, btcBalanceDiv, checkBalance);
         }
 
