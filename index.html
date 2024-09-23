@@ -5,10 +5,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHA-256 Hasher & Bitcoin Address Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Reset and Base Styles */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,253 +17,355 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #5278b1;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             color: #333;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #2D3748;
+            color: #EDF2F7;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        header .logo {
+            font-size: 1.3em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        header .logo svg {
+            margin-right: 8px;
+            fill: #EDF2F7;
+        }
+
+        header .header-right a {
+            display: flex;
+            align-items: center;
+            background-color: #4A5568;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        header .header-right a:hover {
+            background-color: #2D3748;
+        }
+
+        header .header-right svg {
+            margin-right: 4px;
+            fill: #E2E8F0;
+        }
+
+        /* Container Styles */
         .container {
-            background-color: #fff;
-            padding: 40px 60px;
+            background-color: #FFFFFF;
+            padding: 40px 50px 60px 50px;
             border-radius: 12px;
-            max-width: 700px;
+            max-width: 800px;
             width: 90%;
-            margin: 20px auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            margin: 80px auto 20px auto; /* Added top margin to account for fixed header */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-3px);
         }
 
         h1 {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 0px;
             font-size: 2em;
-            color: #4a5568;
+            color: #2D3748;
+            font-weight: 700;
         }
 
         label {
             display: block;
-            margin-top: 20px;
-            margin-bottom: 8px;
+            margin-top: 0px;
+            margin-bottom: 0px;
             font-weight: 500;
-            color: #555;
+            color: #4A5568;
+            font-size: 0.95em;
         }
 
         input[type="text"],
         input[type="number"] {
             width: 100%;
             padding: 12px 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border 0.3s ease;
+            border: 1px solid #CBD5E0;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Inter', sans-serif;
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus {
             border-color: #3182ce;
+            box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.3);
             outline: none;
         }
 
+        /* New Styles for the Flex Container */
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 20px; /* Space between items */
+            margin-top: 20px; /* Space above the flex container */
+        }
+
+        /* Container for Number Input */
+        .hash-times-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Adjust Checkbox Containers */
         .checkbox-container {
             display: flex;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 0; /* Remove top margin to align with other elements */
+            font-size: 0.9em;
         }
 
         .checkbox-container input {
-            margin-right: 10px;
-            transform: scale(1.2);
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
+            accent-color: #3182ce;
         }
 
-        .checkbox-container label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 400;
-            color: #555;
+        /* Optional: Adjust Labels for Consistent Styling */
+        .controls-row label {
+            margin-right: 8px;
         }
 
         button {
-            margin-top: 30px;
+            margin-top: 20px;
             width: 100%;
             padding: 14px 0;
             background-color: #3182ce;
             border: none;
             color: white;
-            font-size: 1.1em;
-            border-radius: 8px;
+            font-size: 1em;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-family: 'Inter', sans-serif;
         }
 
         button:hover {
-            background-color: #2c5282;
+            background-color: #2b6cb0;
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
 
         #result, #btcAddress, #btcBalance {
             margin-top: 25px;
-            padding: 20px;
-            background-color: #edf2f7;
-            border-radius: 8px;
+            padding: 16px;
+            background-color: #F7FAFC;
+            border-radius: 6px;
             word-break: break-all;
             white-space: pre-wrap;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.95em;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85em;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
         }
 
-        header {
-            background-color: hwb(62 65% 6%);
-            padding: 10px 60px;
-            text-align: center;
-            border-top: 2px solid blue;
-            border-bottom: 2px solid blue;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        header .header-left {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 10px; /* Adjusted margin for better spacing */
-            width: 100%;
-            text-align: center;
-        }
-
-        header .header-right {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        header .header-right a {
-            text-decoration: none;
-            color: #3182ce;
-            display: flex;
-            align-items: center;
-            font-size: 1em;
-            transition: color 0.3s ease;
-        }
-
-        header .header-right a:hover {
-            color: #2c5282;
-        }
-
-        header .header-right svg {
-            margin-right: 8px;
-            fill: currentColor;
-        }
-        
+        /* Footer Styles */
         footer {
-            background-color: hwb(62 65% 6%);
-            padding: 10px 60px;
+            background-color: #2D3748;
+            color: #A0AEC0;
+            padding: 15px 30px;
             text-align: center;
-            border-top: 2px solid blue;
-            border-bottom: 2px solid blue;
+            border-top: 1px solid #4A5568;
+            border-bottom: 1px solid #4A5568;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: auto;
             width: 100%;
         }
 
         footer .footer-left {
-            font-size: 1em;
-            color: #555;
-            margin-bottom: 10px; /* Adjusted margin for better spacing */
+            font-size: 0.85em;
+            margin-bottom: 8px;
             width: 100%;
-            text-align: center;
-        }
-
-        footer .footer-right {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            justify-content: center;
-            margin-top: 10px;
         }
 
         footer .footer-right a {
-            text-decoration: none;
-            color: #3182ce;
             display: flex;
             align-items: center;
-            font-size: 1em;
-            transition: color 0.3s ease;
+            background-color: #4A5568;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+            margin-top: 8px;
         }
 
         footer .footer-right a:hover {
-            color: #2c5282;
+            background-color: #2D3748;
         }
 
         footer .footer-right svg {
-            margin-right: 8px;
-            fill: currentColor;
+            margin-right: 4px;
+            fill: #A0AEC0;
         }
 
         /* Responsive Design */
-        @media (max-width: 600px) {
-            .container {
-                padding: 30px 20px; /* Reduced side padding for smaller screens */
-            }
-
+        @media (max-width: 768px) {
             header, footer {
-                padding: 10px 20px; /* Adjusted padding */
+                padding: 15px 20px;
             }
 
-            header .header-left, footer .footer-left {
-                font-size: 1em;
-            }
-
-            header .header-right, footer .footer-right {
-                margin-top: 10px;
+            .container {
+                padding: 30px 25px 40px 25px;
             }
 
             h1 {
-                font-size: 1.5em; /* Reduced font size for better fit */
+                font-size: 1.8em;
+                margin-bottom: 0px;
             }
 
-            label, button {
-                font-size: 1em;
+            label {
+                margin-top: 18px;
+                margin-bottom: 6px;
+                font-size: 0.88em;
             }
 
             input[type="text"],
             input[type="number"] {
-                padding: 10px 14px; /* Adjusted padding */
-                font-size: 0.9em;
+                padding: 10px 14px;
+                font-size: 0.85em;
+            }
+
+            .checkbox-container {
+                margin-top: 14px;
+                font-size: 0.85em;
             }
 
             button {
                 padding: 12px 0;
-                font-size: 1em;
+                font-size: 0.95em;
             }
 
             #result, #btcAddress, #btcBalance {
+                margin-top: 20px;
+                padding: 14px;
+                font-size: 0.8em;
+            }
+
+            .controls-row {
+                gap: 15px; /* Reduce space between items on smaller screens */
+            }
+
+            .hash-times-container {
+                flex: 1; /* Allow the number input to take available space */
+            }
+        }
+
+        @media (max-width: 480px) {
+            header .header-right, footer .footer-right {
+                justify-content: center;
+                width: 100%;
+                margin-top: 6px;
+            }
+
+            header .logo, footer .footer-left {
+                width: 100%;
+                text-align: center;
+                font-size: 1.2em;
+            }
+
+            .container {
+                padding: 25px 20px 35px 20px;
+            }
+
+            h1 {
+                font-size: 1.6em;
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-size: 0.85em;
+            }
+
+            input[type="text"],
+            input[type="number"] {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .checkbox-container {
+                font-size: 0.8em;
+            }
+
+            button {
+                padding: 10px 0;
                 font-size: 0.9em;
-                padding: 15px;
+            }
+
+            #result, #btcAddress, #btcBalance {
+                padding: 12px;
+                font-size: 0.75em;
+            }
+
+            .controls-row {
+                flex-direction: column; /* Stack elements vertically on very small screens */
+                align-items: flex-start;
+            }
+
+            .hash-times-container,
+            .checkbox-container {
+                width: 100%; /* Full width for each element */
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="header-left">🚀 Convenient & Secure BTC Brainwallet Generator | Works Offline ✅</div>
+        <div class="logo">
+            <!-- You can replace the SVG below with your own logo -->
+            <svg height="30" width="30" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 0L15.09 8H24L17.454 12.545L20.545 20.545L12 16.91L3.455 20.545L6.545 12.545L0 8H8.91L12 0Z"></path>
+            </svg>
+            SHA256-BTC-Generator
+        </div>
         <div class="header-right">
             <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" rel="noopener noreferrer">
                 <!-- GitHub Star Icon -->
                 <svg height="20" width="20" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
                 </svg>
-                <!-- GitHub Star Count -->
-                <span id="star-count">0</span>
+                <span id="star-count">0</span>  Stars
             </a>
         </div>
     </header>
@@ -271,18 +374,24 @@
         <label for="inputText">Text to Hash:</label>
         <input type="text" id="inputText" placeholder="Enter your text here">
 
-        <label for="hashTimes">Number of Times to Hash:</label>
-        <input type="number" id="hashTimes" min="1" value="1">
+        <!-- New Flex Container for Number Input and Checkboxes -->
+        <div class="controls-row">
+            <div class="hash-times-container">
+                <label for="hashTimes">Number of Times to Hash:</label>
+                <input type="number" id="hashTimes" min="1" value="1">
+            </div>
 
-        <div class="checkbox-container">
-            <input type="checkbox" id="autoUpdate">
-            <label for="autoUpdate">Auto-update Hash</label>
-        </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="autoUpdate">
+                <label for="autoUpdate">Auto-update Hash</label>
+            </div>
 
-        <div class="checkbox-container">
-            <input type="checkbox" id="checkBalance">
-            <label for="checkBalance">Check Balance</label>
+            <div class="checkbox-container">
+                <input type="checkbox" id="checkBalance">
+                <label for="checkBalance">Check Balance</label>
+            </div>
         </div>
+        <!-- End of Flex Container -->
 
         <button id="hashButton">Hash</button>
 
@@ -290,16 +399,23 @@
         <div id="btcAddress">Bitcoin Address</div>
         <div id="btcBalance">Bitcoin Balance</div>
     </div>
-
     <footer>
-        <div class="footer-left" style="color: black;">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:
-            <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" style="color: #3182ce; text-decoration: none;">
+        <div class="footer-left">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:
+            <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG">
                 1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
             </a>
         </div>
         <div class="footer-right">
             <div class="github-profile-badge" data-user="ikrahul"></div>
             <script src="https://cdn.jsdelivr.net/gh/Rapsssito/github-profile-badge@latest/src/widget.min.js"></script>
+            <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" rel="noopener noreferrer">
+                <!-- GitHub Icon -->
+                <svg height="20" width="20" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                <!-- GitHub Star Count -->
+                <span id="footer-star-count">0</span>
+            </a>
         </div>
     </footer>
 
@@ -376,7 +492,7 @@
                 return balanceBTC;
             } catch (error) {
                 console.error('Error fetching balance:', error);
-                return 'Error fetching balance.';
+                return 'Error fetching balance. Rate limit reached for the free api.\nFor dedicated address checker reach out at rahulban@live.in.';
             }
         }
 
@@ -417,7 +533,7 @@
                 currentHash = await sha256(currentHash);
             }
 
-            resultDiv.textContent = `SHA-256 Hash/Private Key:\n${currentHash}`;
+            resultDiv.textContent = `SHA-256 Hash / Private Key:\n${currentHash}`;
             generateBitcoinAddress(currentHash, btcAddressDiv, btcBalanceDiv, checkBalance);
         }
 
@@ -526,17 +642,21 @@
          */
         async function fetchGitHubStars() {
             const repo = 'ikrahul/SHA256-BTC-Generater'; // Replace with your GitHub repo in the format 'username/repo'
-            const starCountSpan = document.getElementById('star-count');
+            const starCountSpans = document.querySelectorAll('#star-count, #footer-star-count');
             try {
                 const response = await fetch(`https://api.github.com/repos/${repo}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const repoData = await response.json();
-                starCountSpan.textContent = repoData.stargazers_count;
+                starCountSpans.forEach(span => {
+                    span.textContent = repoData.stargazers_count;
+                });
             } catch (error) {
                 console.error('Error fetching GitHub stars:', error);
-                starCountSpan.textContent = 'N/A';
+                starCountSpans.forEach(span => {
+                    span.textContent = 'N/A';
+                });
             }
         }
     </script>
