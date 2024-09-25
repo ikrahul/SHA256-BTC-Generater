@@ -95,7 +95,7 @@
 
         h1 {
             text-align: center;
-            margin-bottom: 0px;
+            margin-bottom: 30px;
             font-size: 2em;
             color: #2D3748;
             font-weight: 700;
@@ -141,6 +141,7 @@
         .hash-times-container {
             display: flex;
             flex-direction: column;
+            flex: 1; /* Allow the number input to take available space */
         }
 
         /* Adjust Checkbox Containers */
@@ -164,8 +165,26 @@
             margin-right: 8px;
         }
 
-        button {
+        /* Custom API Container */
+        .custom-api-container {
             margin-top: 20px;
+        }
+
+        .custom-api-inputs {
+            margin-top: 10px;
+        }
+
+        .custom-api-inputs label {
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        .custom-api-inputs input[type="text"] {
+            width: 100%;
+        }
+
+        button {
+            margin-top: 30px;
             width: 100%;
             padding: 14px 0;
             background-color: #3182ce;
@@ -290,6 +309,10 @@
             .hash-times-container {
                 flex: 1; /* Allow the number input to take available space */
             }
+
+            .custom-api-container {
+                margin-top: 15px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -344,7 +367,8 @@
             }
 
             .hash-times-container,
-            .checkbox-container {
+            .checkbox-container,
+            .custom-api-container {
                 width: 100%; /* Full width for each element */
             }
         }
@@ -365,7 +389,7 @@
                 <svg height="20" width="20" viewBox="0 0 16 16" aria-hidden="true">
                     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
                 </svg>
-                <span id="star-count">0</span>  Stars
+                <span id="star-count">0</span> Stars
             </a>
         </div>
     </header>
@@ -374,7 +398,7 @@
         <label for="inputText">Text to Hash:</label>
         <input type="text" id="inputText" placeholder="Enter your text here">
 
-        <!-- New Flex Container for Number Input and Checkboxes -->
+        <!-- Flex Container for Number Input and Checkboxes -->
         <div class="controls-row">
             <div class="hash-times-container">
                 <label for="hashTimes">Number of Times to Hash:</label>
@@ -392,6 +416,22 @@
             </div>
         </div>
         <!-- End of Flex Container -->
+
+        <!-- Custom API Container -->
+        <div class="custom-api-container">
+            <div class="checkbox-container">
+                <input type="checkbox" id="useCustomApi">
+                <label for="useCustomApi">Use Custom API URL for Balance</label>
+            </div>
+            <div class="custom-api-inputs" style="display: none;">
+                <label for="customApiUrl">Custom API URL:</label>
+                <input type="text" id="customApiUrl" placeholder="https://api.example.com/balance?address=${address}">
+
+                <label for="customApiKey">Response JSON Key for Balance:</label>
+                <input type="text" id="customApiKey" placeholder="balance">
+            </div>
+        </div>
+        <!-- End of Custom API Container -->
 
         <button id="hashButton">Hash</button>
 
@@ -477,22 +517,60 @@
         }
 
         /**
-         * Fetches the Bitcoin balance for a given address using Blockchain.info API.
+         * Fetches the Bitcoin balance using the appropriate API.
          * @param {string} address - The Bitcoin address.
+         * @param {string} customApiUrl - The custom API URL template.
+         * @param {string} customApiKey - The JSON key to extract balance.
          * @returns {Promise<string>} - The balance in BTC as a string.
          */
-        async function fetchBalance(address) {
+        async function fetchBalance(address, customApiUrl = null, customApiKey = null) {
             try {
-                const response = await fetch(`https://blockchain.info/q/addressbalance/${address}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                let responseData;
+                if (customApiUrl && customApiKey) {
+                    // Use Custom API
+                    const apiUrl = customApiUrl.replace('${address}', encodeURIComponent(address));
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    responseData = await response.json();
+                    if (!(customApiKey in responseData)) {
+                        throw new Error(`Key "${customApiKey}" not found in the response.`);
+                    }
+                    const balanceBTC = parseBalance(responseData[customApiKey]);
+                    return balanceBTC;
+                } else {
+                    // Use Default Blockchain.info API
+                    const response = await fetch(`https://blockchain.info/q/addressbalance/${address}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const balanceSatoshi = await response.text();
+                    const balanceBTC = (parseInt(balanceSatoshi, 10) / 1e8).toFixed(8);
+                    return balanceBTC;
                 }
-                const balanceSatoshi = await response.text();
-                const balanceBTC = (parseInt(balanceSatoshi, 10) / 1e8).toFixed(8);
-                return balanceBTC;
             } catch (error) {
                 console.error('Error fetching balance:', error);
                 return 'Error fetching balance. Rate limit reached for the free api.\nFor dedicated address checker reach out at rahulban@live.in.';
+            }
+        }
+
+        /**
+         * Parses the balance value to BTC.
+         * @param {any} value - The value extracted from the API response.
+         * @returns {string} - The balance in BTC as a string.
+         */
+        function parseBalance(value) {
+            if (typeof value === 'number') {
+                return (value / 1e8).toFixed(8);
+            } else if (typeof value === 'string') {
+                const parsed = parseFloat(value);
+                if (isNaN(parsed)) {
+                    throw new Error('Balance value is not a valid number.');
+                }
+                return (parsed / 1e8).toFixed(8);
+            } else {
+                throw new Error('Invalid balance value type.');
             }
         }
 
@@ -580,7 +658,20 @@
 
                 // If checkBalance is enabled, fetch and display the balance
                 if (checkBalance) {
-                    fetchBalance(btcAddress).then(balance => {
+                    // Check if custom API is used
+                    const useCustomApi = document.getElementById('useCustomApi').checked;
+                    let customApiUrl = null;
+                    let customApiKey = null;
+                    if (useCustomApi) {
+                        customApiUrl = document.getElementById('customApiUrl').value.trim();
+                        customApiKey = document.getElementById('customApiKey').value.trim();
+                        if (!customApiUrl || !customApiKey) {
+                            balanceDiv.textContent = 'Please provide both Custom API URL and Response JSON Key.';
+                            return;
+                        }
+                    }
+
+                    fetchBalance(btcAddress, customApiUrl, customApiKey).then(balance => {
                         if (balance === 'Error fetching balance.') {
                             balanceDiv.textContent = balance;
                         } else {
@@ -597,6 +688,9 @@
             }
         }
 
+        /**
+         * Sets up the auto-update functionality based on the checkbox state.
+         */
         function setupAutoUpdate() {
             const autoUpdateCheckbox = document.getElementById('autoUpdate');
             const inputText = document.getElementById('inputText');
@@ -616,26 +710,6 @@
                 hashTimes.removeEventListener('input', handleInputChange);
             }
         }
-
-        document.getElementById('hashButton').addEventListener('click', performHashing);
-
-        document.getElementById('autoUpdate').addEventListener('change', () => {
-            setupAutoUpdate();
-            if (document.getElementById('autoUpdate').checked) {
-                performHashing();
-            }
-        });
-
-        // Initialize auto-update based on the checkbox state on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            setupAutoUpdate();
-            if (document.getElementById('autoUpdate').checked) {
-                performHashing();
-            }
-
-            // Fetch GitHub stars on page load
-            fetchGitHubStars();
-        });
 
         /**
          * Fetches the number of GitHub stars for the repository and updates the star count.
@@ -659,6 +733,41 @@
                 });
             }
         }
+
+        // Event Listeners
+        document.getElementById('hashButton').addEventListener('click', performHashing);
+
+        document.getElementById('autoUpdate').addEventListener('change', () => {
+            setupAutoUpdate();
+            if (document.getElementById('autoUpdate').checked) {
+                performHashing();
+            }
+        });
+
+        document.getElementById('useCustomApi').addEventListener('change', () => {
+            const customApiInputs = document.querySelector('.custom-api-inputs');
+            if (document.getElementById('useCustomApi').checked) {
+                customApiInputs.style.display = 'block';
+            } else {
+                customApiInputs.style.display = 'none';
+            }
+            // Clear previous custom API inputs when unchecked
+            if (!document.getElementById('useCustomApi').checked) {
+                document.getElementById('customApiUrl').value = '';
+                document.getElementById('customApiKey').value = '';
+            }
+        });
+
+        // Initialize auto-update based on the checkbox state on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            setupAutoUpdate();
+            if (document.getElementById('autoUpdate').checked) {
+                performHashing();
+            }
+
+            // Fetch GitHub stars on page load
+            fetchGitHubStars();
+        });
     </script>
 </body>
 </html>

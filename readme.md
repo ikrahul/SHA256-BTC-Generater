@@ -22,6 +22,7 @@
 - **SHA-256 Hashing:** Generate SHA-256 hashes of your input text with customizable hashing iterations.
 - **Bitcoin Address Generation:** Convert SHA-256 hashes into Bitcoin addresses using the secp256k1 elliptic curve.
 - **Balance Checking:** Optionally check the Bitcoin balance of the generated address.
+- **Custom API Support:** Use a custom API URL to fetch Bitcoin balances, with the ability to specify the JSON key for the balance.
 - **Auto-Update:** Automatically update hashes and addresses as you modify your input.
 - **Offline Operation:** Ensures maximum security by processing all data locally within your browser.
 - **Responsive Design:** Optimized for both desktop and mobile devices.
@@ -65,6 +66,7 @@ To run the **SHA-256 Hasher & Bitcoin Address Generator** locally, follow these 
 
    - **Auto-update Hash:** Enable this option to automatically update the hash and Bitcoin address as you modify your input.
    - **Check Balance:** Enable this to fetch and display the Bitcoin balance of the generated address.
+   - **Use Custom API URL for Balance:** Enable this to use a custom API URL for fetching the Bitcoin balance. Provide the custom API URL and the JSON key for the balance in the respective fields.
 
 4. **Generate Hash and Address**
 
