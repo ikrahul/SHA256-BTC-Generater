@@ -608,7 +608,7 @@
                 currentHash = await sha256(currentHash);
             }
 
-            resultDiv.textContent = `SHA-256 Hash / Private Key:\n${currentHash}`;
+            resultDiv.textContent = `SHA-256 Hash / Private Key: ${currentHash}`;
             generateBitcoinAddress(currentHash, btcAddressDiv, btcBalanceDiv, checkBalance);
         }
 
@@ -651,7 +651,7 @@
                 // Convert to Base58
                 const btcAddress = base58Encode(addressBytes);
 
-                displayDiv.textContent = `Bitcoin Address:\n${btcAddress}`;
+                displayDiv.textContent = `Bitcoin Address: ${btcAddress}`;
 
                 // If checkBalance is enabled, fetch and display the balance
                 if (checkBalance) {
