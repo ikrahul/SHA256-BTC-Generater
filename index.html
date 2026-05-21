@@ -1,793 +1,268 @@
 <!DOCTYPE html>
 <!-- Author: Rahul Ban rahulban@live.in-->
 <!-- Github: https://github.com/ikrahul/SHA256-BTC-Generater-->
-
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHA-256 Hasher & Bitcoin Address Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="style.css">
+
     <style>
-        /* Reset and Base Styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        [xl-cloak] { display: none !important; }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        .dark .glass {
+            background: rgba(17, 24, 39, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: #2D3748;
-            color: #EDF2F7;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        header .logo {
-            font-size: 1.3em;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-        }
-
-        header .logo svg {
-            margin-right: 8px;
-            fill: #EDF2F7;
-        }
-
-        header .header-right a {
-            display: flex;
-            align-items: center;
-            background-color: #4A5568;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-            font-size: 0.9em;
-        }
-
-        header .header-right a:hover {
-            background-color: #2D3748;
-        }
-
-        header .header-right svg {
-            margin-right: 4px;
-            fill: #E2E8F0;
-        }
-
-        /* Container Styles */
-        .container {
-            background-color: #FFFFFF;
-            padding: 10px 20px 20px 20px;
-            border-radius: 12px;
-            max-width: 800px;
-            width: 90%;
-            margin: 80px auto 20px auto; /* Added top margin to account for fixed header */
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            margin-top: 105px;
-        }
-
-        .container:hover {
-            transform: translateY(-3px);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 0px;
-            font-size: 2em;
-            color: #2D3748;
-            font-weight: 500;
-        }
-
-        label {
-            display: block;
-            margin-top: 0px;
-            margin-bottom: 0px;
-            font-weight: 500;
-            color: #4A5568;
-            font-size: 0.95em;
-        }
-
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1px solid #CBD5E0;
-            border-radius: 6px;
-            font-size: 0.9em;
-            transition: border 0.3s ease, box-shadow 0.3s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus {
-            border-color: #3182ce;
-            box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.3);
-            outline: none;
-        }
-
-        /* New Styles for the Flex Container */
-        .controls-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 20px; /* Space between items */
-            margin-top: 1px; /* Space above the flex container */
-        }
-
-        /* Container for Number Input */
-        .hash-times-container {
-            display: flex;
-            flex-direction: column;
-            flex: 1; /* Allow the number input to take available space */
-        }
-
-        /* Adjust Checkbox Containers */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-top: 0; /* Remove top margin to align with other elements */
-            font-size: 0.9em;
-        }
-
-        .checkbox-container input {
-            margin-right: 8px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: #3182ce;
-        }
-
-        /* Optional: Adjust Labels for Consistent Styling */
-        .controls-row label {
-            margin-right: 8px;
-        }
-
-        /* Custom API Container */
-        .custom-api-container {
-            margin-top: 20px;
-        }
-
-        .custom-api-inputs {
-            margin-top: 10px;
-        }
-
-        .custom-api-inputs label {
-            margin-top: 10px;
-            margin-bottom: 5px;
-        }
-
-        .custom-api-inputs input[type="text"] {
-            width: 100%;
-        }
-
-        button {
-            margin-top: 5px;
-            width: 100%;
-            padding: 14px 0;
-            background-color: #3182ce;
-            border: none;
-            color: white;
-            font-size: 1em;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            font-family: 'Inter', sans-serif;
-        }
-
-        button:hover {
-            background-color: #2b6cb0;
-            transform: translateY(-1px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        #result, #btcAddress, #btcBalance {
-            margin-top: 5px;
-            padding: 16px;
-            background-color: #F7FAFC;
-            border-radius: 6px;
-            word-break: break-all;
-            white-space: pre-wrap;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.85em;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
-        }
-
-        /* Footer Styles */
-        footer {
-            background-color: #2D3748;
-            color: #A0AEC0;
-            padding: 15px 30px;
-            text-align: center;
-            border-top: 1px solid #4A5568;
-            border-bottom: 1px solid #4A5568;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            width: 100%;
-        }
-
-        footer .footer-left {
-            font-size: 0.85em;
-            margin-bottom: 8px;
-            width: 100%;
-        }
-
-        footer .footer-right a {
-            display: flex;
-            align-items: center;
-            background-color: #4A5568;
-            padding: 6px 10px;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-            font-size: 0.9em;
-            margin-top: 8px;
-        }
-
-        footer .footer-right a:hover {
-            background-color: #2D3748;
-        }
-
-        footer .footer-right svg {
-            margin-right: 4px;
-            fill: #A0AEC0;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header, footer {
-                padding: 15px 20px;
-            }
-
-            .container {
-                padding: 30px 25px 40px 25px;
-            }
-
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 0px;
-            }
-
-            label {
-                margin-top: 5px;
-                margin-bottom: 6px;
-                font-size: 0.88em;
-            }
-
-            input[type="text"],
-            input[type="number"] {
-                padding: 10px 14px;
-                font-size: 0.85em;
-            }
-
-            .checkbox-container {
-                margin-top: 14px;
-                font-size: 0.85em;
-            }
-
-            button {
-                padding: 12px 0;
-                font-size: 0.95em;
-            }
-
-            #result, #btcAddress, #btcBalance {
-                margin-top: 20px;
-                padding: 14px;
-                font-size: 0.8em;
-            }
-
-            .controls-row {
-                gap: 15px; /* Reduce space between items on smaller screens */
-            }
-
-            .hash-times-container {
-                flex: 1; /* Allow the number input to take available space */
-            }
-
-            .custom-api-container {
-                margin-top: 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header .header-right, footer .footer-right {
-                justify-content: center;
-                width: 100%;
-                margin-top: 6px;
-            }
-
-            header .logo, footer .footer-left {
-                width: 100%;
-                text-align: center;
-                font-size: 1.2em;
-            }
-
-            .container {
-                padding: 25px 20px 35px 20px;
-            }
-
-            h1 {
-                font-size: 1.6em;
-                margin-bottom: 0px;
-            }
-
-            label {
-                font-size: 0.85em;
-            }
-
-            input[type="text"],
-            input[type="number"] {
-                padding: 8px 12px;
-                font-size: 0.8em;
-            }
-
-            .checkbox-container {
-                font-size: 0.8em;
-            }
-
-            button {
-                padding: 10px 0;
-                font-size: 0.9em;
-            }
-
-            #result, #btcAddress, #btcBalance {
-                padding: 12px;
-                font-size: 0.75em;
-            }
-
-            .controls-row {
-                flex-direction: column; /* Stack elements vertically on very small screens */
-                align-items: flex-start;
-            }
-
-            .hash-times-container,
-            .checkbox-container,
-            .custom-api-container {
-                width: 100%; /* Full width for each element */
-            }
+        .transition-all-300 {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
     </style>
 </head>
-<body>
-    <header>
-        <div class="logo">
-            <div class="github-profile-badge" data-user="ikrahul"></div>
-            <script src="https://cdn.jsdelivr.net/gh/Rapsssito/github-profile-badge@latest/src/widget.min.js"></script>
-            SHA256-BTC-Generator     
-        </div>
-        <div class="header-right">
-            <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" rel="noopener noreferrer">
-                <!-- GitHub Star Icon -->
-                <svg height="20" width="20" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-                <span id="star-count">0</span> Stars
-            </a>
+<body class="bg-slate-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 glass shadow-sm border-b border-slate-200 dark:border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="github-profile-badge scale-75 sm:scale-100" data-user="ikrahul"></div>
+                    <span class="font-bold text-lg hidden sm:inline-block tracking-tight text-primary-600 dark:text-primary-400">SHA256-BTC</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors" title="Toggle Theme">
+                        <i data-lucide="sun" class="hidden dark:block w-5 h-5"></i>
+                        <i data-lucide="moon" class="block dark:hidden w-5 h-5"></i>
+                    </button>
+
+                    <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 dark:bg-gray-100 text-white dark:text-slate-900 text-sm font-medium hover:bg-slate-800 dark:hover:bg-gray-200 transition-all shadow-sm">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span id="star-count">0</span>
+                        <span class="hidden xs:inline">Stars</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </header>
-    <div class="container">
-        <h1>SHA-256 Hasher & Bitcoin Address Generator</h1>
-        <label for="inputText">Text to Hash:</label>
-        <input type="text" id="inputText" placeholder="Enter your text here">
 
-        <!-- Flex Container for Number Input and Checkboxes -->
-        <div class="controls-row">
-            <div class="hash-times-container">
-                <label for="hashTimes">Number of Times to Hash:</label>
-                <input type="number" id="hashTimes" min="1" value="1">
+    <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
+                SHA-256 Hasher & BTC Generator
+            </h1>
+            <p class="text-slate-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                Securely generate hashes and Bitcoin addresses entirely in your browser.
+            </p>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-slate-200 dark:border-gray-700 p-6 sm:p-8 space-y-6">
+            <!-- Input Section -->
+            <div class="space-y-2">
+                <label for="inputText" class="block text-sm font-semibold text-slate-700 dark:text-gray-300">Text to Hash</label>
+                <div class="relative group">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i data-lucide="type" class="h-5 w-5 text-slate-400 group-focus-within:text-primary-500 transition-colors"></i>
+                    </div>
+                    <input type="text" id="inputText"
+                        class="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-gray-900 border border-slate-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 transition-all sm:text-sm text-slate-900 dark:text-white"
+                        placeholder="Enter your passphrase or text here">
+                </div>
             </div>
 
-            <div class="checkbox-container">
-                <input type="checkbox" id="autoUpdate">
-                <label for="autoUpdate">Auto-update Hash</label>
+            <!-- Controls Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
+                <div class="space-y-2">
+                    <label for="hashTimes" class="block text-sm font-semibold text-slate-700 dark:text-gray-300">Hashing Iterations</label>
+                    <input type="number" id="hashTimes" min="1" value="1"
+                        class="block w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-slate-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 transition-all sm:text-sm text-slate-900 dark:text-white">
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-gray-900 rounded-xl border border-dashed border-slate-300 dark:border-gray-600">
+                    <input type="checkbox" id="autoUpdate" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                    <label for="autoUpdate" class="text-sm font-medium text-slate-600 dark:text-gray-400 cursor-pointer">Auto-update</label>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-gray-900 rounded-xl border border-dashed border-slate-300 dark:border-gray-600">
+                    <input type="checkbox" id="checkBalance" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                    <label for="checkBalance" class="text-sm font-medium text-slate-600 dark:text-gray-400 cursor-pointer">Check Balance</label>
+                </div>
             </div>
 
-            <div class="checkbox-container">
-                <input type="checkbox" id="checkBalance">
-                <label for="checkBalance">Check Balance</label>
+            <!-- Custom API Section -->
+            <div class="border-t border-slate-100 dark:border-gray-700 pt-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <input type="checkbox" id="useCustomApi" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
+                    <label for="useCustomApi" class="text-sm font-semibold text-slate-700 dark:text-gray-300 cursor-pointer">Use Custom API for Balance</label>
+                </div>
+
+                <div id="customApiInputs" class="hidden space-y-4 animate-in slide-in-from-top-2 duration-300">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="customApiUrl" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">API URL Template</label>
+                            <input type="text" id="customApiUrl" placeholder="https://api.example.com/balance?address=${address}"
+                                class="block w-full px-4 py-2 bg-slate-50 dark:bg-gray-900 border border-slate-200 dark:border-gray-600 rounded-lg text-sm">
+                        </div>
+                        <div class="space-y-2">
+                            <label for="customApiKey" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">JSON Key</label>
+                            <input type="text" id="customApiKey" placeholder="balance"
+                                class="block w-full px-4 py-2 bg-slate-50 dark:bg-gray-900 border border-slate-200 dark:border-gray-600 rounded-lg text-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="hashButton" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary-500/30 transform active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 group">
+                <i data-lucide="hash" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
+                Generate Results
+            </button>
+
+            <!-- Results Section -->
+            <div id="resultsArea" class="space-y-6 pt-6 border-t border-slate-100 dark:border-gray-700">
+
+                <!-- Hash Result -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">SHA-256 Hash / Private Key</span>
+                        <button onclick="copyToClipboard('result')" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium flex items-center gap-1 transition-colors">
+                            <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                        </button>
+                    </div>
+                    <div id="result" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm break-all border border-slate-200 dark:border-gray-700 min-h-[3rem] flex items-center">
+                        Waiting for input...
+                    </div>
+                </div>
+
+                <!-- BTC Address Result -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Bitcoin Address (Mainnet)</span>
+                            <button onclick="copyToClipboard('btcAddress')" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium flex items-center gap-1 transition-colors">
+                                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+                            </button>
+                        </div>
+                        <div id="btcAddress" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm break-all border border-slate-200 dark:border-gray-700 min-h-[3rem] flex items-center">
+                            Address will appear here...
+                        </div>
+
+                        <div class="space-y-2 pt-2">
+                            <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Balance</span>
+                            <div id="btcBalance" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm border border-slate-200 dark:border-gray-700 flex items-center gap-2">
+                                <span class="text-slate-400 italic">Not checked</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-gray-700 space-y-3">
+                        <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider text-center w-full">QR Code</span>
+                        <div id="qrcode" class="bg-white p-2 rounded-lg shadow-inner"></div>
+                        <span class="text-[10px] text-slate-400 text-center">Scan to receive BTC</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- End of Flex Container -->
 
-        <!-- Custom API Container -->
-        <div class="custom-api-container">
-            <div class="checkbox-container">
-                <input type="checkbox" id="useCustomApi">
-                <label for="useCustomApi">Use Custom API URL for Balance</label>
-            </div>
-            <div class="custom-api-inputs" style="display: none;">
-                <label for="customApiUrl">Custom API URL:</label>
-                <input type="text" id="customApiUrl" placeholder="https://api.example.com/balance?address=${address}">
-
-                <label for="customApiKey">Response JSON Key for Balance:</label>
-                <input type="text" id="customApiKey" placeholder="balance">
-            </div>
+        <!-- Warning Section -->
+        <div class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-xl flex gap-3">
+            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0"></i>
+            <p class="text-sm text-amber-800 dark:text-amber-200">
+                <span class="font-bold">Security Note:</span> This tool is for educational purposes.
+                Always use hardware wallets or trusted software for significant funds.
+                Keep your passphrases private.
+            </p>
         </div>
-        <!-- End of Custom API Container -->
+    </main>
 
-        <button id="hashButton">Hash</button>
+    <footer class="mt-auto border-t border-slate-200 dark:border-gray-800 glass py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="text-sm text-slate-600 dark:text-gray-400">
+                        🚀 Created with ❤️ by <span class="font-semibold text-slate-900 dark:text-white">Rahul Ban</span> © 2024
+                    </p>
+                    <div class="mt-2 flex items-center justify-center md:justify-start gap-2">
+                        <span class="text-xs text-slate-500">Support:</span>
+                        <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" class="text-xs font-mono text-primary-600 dark:text-primary-400 hover:underline">
+                            1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
+                        </a>
+                    </div>
+                </div>
 
-        <div id="result">SHA-256 Hash / Private Key</div>
-        <div id="btcAddress">Bitcoin Address</div>
-        <div id="btcBalance">Bitcoin Balance</div>
-    </div>
-    <footer>
-        <div class="footer-left">🚀 Created with ❤️ by Rahul Ban © 2024 | Support:
-            <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG">
-                1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
-            </a>
-        </div>
-        <div class="footer-right">
-            <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" rel="noopener noreferrer">
-                <!-- GitHub Icon -->
-                <svg height="20" width="20" viewBox="0 0 16 16" aria-hidden="true">
-                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 012.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-                <!-- GitHub Star Count -->
-                <span id="footer-star-count">0</span>
-            </a>
+                <div class="flex items-center gap-4">
+                    <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 text-sm font-medium hover:bg-slate-200 dark:hover:bg-gray-700 transition-all border border-slate-200 dark:border-gray-700">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span id="footer-star-count">0</span> Stars
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
-    <!-- Including External Libraries via CDN -->
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
+        <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+            <span id="toastMessage" class="text-sm font-medium">Copied to clipboard!</span>
+        </div>
+    </div>
+
+    <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
     <script>
-        // Initialize elliptic curve
-        const EC = elliptic.ec;
-        const ec = new EC('secp256k1');
-
-        // Base58 character set
-        const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
-        /**
-         * Converts a hexadecimal string to a byte array.
-         * @param {string} hex - The hexadecimal string.
-         * @returns {Uint8Array} - The resulting byte array.
-         */
-        function hexToBytes(hex) {
-            const bytes = [];
-            for (let c = 0; c < hex.length; c += 2) {
-                bytes.push(parseInt(hex.substr(c, 2), 16));
-            }
-            return new Uint8Array(bytes);
-        }
-
-        /**
-         * Encodes a byte array into a Base58 string.
-         * @param {Uint8Array} bytes - The byte array to encode.
-         * @returns {string} - The Base58 encoded string.
-         */
-        function base58Encode(bytes) {
-            const digits = [0];
-            for (let i = 0; i < bytes.length; i++) {
-                let carry = bytes[i];
-                for (let j = 0; j < digits.length; j++) {
-                    carry += digits[j] << 8;
-                    digits[j] = carry % 58;
-                    carry = (carry / 58) | 0;
-                }
-                while (carry > 0) {
-                    digits.push(carry % 58);
-                    carry = (carry / 58) | 0;
-                }
-            }
-            // Convert digits to the Base58 string
-            let result = '';
-            // Leading zeros
-            for (let i = 0; i < bytes.length && bytes[i] === 0; i++) {
-                result += '1';
-            }
-            // Convert digits to characters
-            for (let i = digits.length - 1; i >= 0; i--) {
-                result += BASE58_ALPHABET[digits[i]];
-            }
-            return result;
-        }
-
-        /**
-         * Fetches the Bitcoin balance using the appropriate API.
-         * @param {string} address - The Bitcoin address.
-         * @param {string} customApiUrl - The custom API URL template.
-         * @param {string} customApiKey - The JSON key to extract balance.
-         * @returns {Promise<string>} - The balance in BTC as a string.
-         */
-        async function fetchBalance(address, customApiUrl = null, customApiKey = null) {
-            try {
-                const resultDiv = document.getElementById('result');
-                let responseData;
-                if (customApiUrl && customApiKey) {
-                    // Use Custom API
-                    const apiUrl = customApiUrl.replace('${address}', encodeURIComponent(address));
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    responseData = await response.json();
-                    if (!(customApiKey in responseData)) {
-                        throw new Error(`Key "${customApiKey}" not found in the response.`);
-                    }
-                    const balanceBTC = parseBalance(responseData[customApiKey]);
-                    if (parseFloat(balanceBTC) > 0) {
-                        const content = `hash: ${resultDiv.textContent}\nAddress: ${address}\nBalance: ${balanceBTC} BTC`;
-                        const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
-                        const link = document.createElement("a");
-                        const url = URL.createObjectURL(blob);
-                        link.setAttribute("href", url);
-                        link.setAttribute("download", "balance.txt");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                    return balanceBTC;
-                } else {
-                    // Use Default Blockchain.info API
-                    const response = await fetch(`https://blockchain.info/q/addressbalance/${address}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const balanceSatoshi = await response.text();
-                    const balanceBTC = (parseInt(balanceSatoshi, 10) / 1e8).toFixed(8);
-                    if (parseFloat(balanceBTC) > 0) {
-                        const content = `hash: ${resultDiv.textContent}\nAddress: ${address}\nBalance: ${balanceBTC} BTC`;
-                        const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
-                        const link = document.createElement("a");
-                        const url = URL.createObjectURL(blob);
-                        link.setAttribute("href", url);
-                        link.setAttribute("download", "balance.txt");
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
-                    return balanceBTC;
-                }
-            } catch (error) {
-                console.error('Error fetching balance:', error);
-                return 'Error fetching balance. Rate limit reached for the free api.\nFor dedicated address checker reach out at rahulban@live.in.';
-            }
-        }
-
-        /**
-         * Parses the balance value to BTC.
-         * @param {any} value - The value extracted from the API response.
-         * @returns {string} - The balance in BTC as a string.
-         */
-        function parseBalance(value) {
-            if (typeof value === 'number') {
-                return (value / 1e8).toFixed(8);
-            } else if (typeof value === 'string') {
-                const parsed = parseFloat(value);
-                if (isNaN(parsed)) {
-                    throw new Error('Balance value is not a valid number.');
-                }
-                return (parsed / 1e8).toFixed(8);
-            } else {
-                throw new Error('Invalid balance value type.');
-            }
-        }
-
-        /**
-         * Computes the SHA-256 hash of a given message.
-         * @param {string} message - The input message.
-         * @returns {Promise<string>} - The SHA-256 hash as a hexadecimal string.
-         */
-        async function sha256(message) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
-        }
-
-        /**
-         * Performs the hashing process and updates the UI accordingly.
-         */
-        async function performHashing() {
-            const textInput = document.getElementById('inputText').value;
-            const times = parseInt(document.getElementById('hashTimes').value, 10);
-            const resultDiv = document.getElementById('result');
-            const btcAddressDiv = document.getElementById('btcAddress');
-            const btcBalanceDiv = document.getElementById('btcBalance');
-            const checkBalance = document.getElementById('checkBalance').checked;
-
-            if (times < 1) {
-                resultDiv.textContent = 'Number of times to hash must be at least 1.';
-                btcAddressDiv.textContent = '';
-                btcBalanceDiv.textContent = '';
-                return;
-            }
-
-            let currentHash = textInput;
-            for (let i = 0; i < times; i++) {
-                currentHash = await sha256(currentHash);
-            }
-
-            resultDiv.textContent = `SHA-256 Hash / Private Key: ${currentHash}`;
-            generateBitcoinAddress(currentHash, btcAddressDiv, btcBalanceDiv, checkBalance);
-        }
-
-        /**
-         * Generates a Bitcoin address from a given private key and updates the UI.
-         * @param {string} privateKeyHex - The private key in hexadecimal format.
-         * @param {HTMLElement} displayDiv - The div to display the Bitcoin address.
-         * @param {HTMLElement} balanceDiv - The div to display the Bitcoin balance.
-         * @param {boolean} checkBalance - Whether to fetch the balance.
-         */
-        function generateBitcoinAddress(privateKeyHex, displayDiv, balanceDiv, checkBalance) {
-            try {
-                // Create key pair from private key
-                const key = ec.keyFromPrivate(privateKeyHex, 'hex');
-
-                // Get the public key in compressed format (33 bytes)
-                const publicKey = key.getPublic(true, 'hex');
-
-                // Perform SHA-256 hashing on the public key
-                const sha256Hash = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(publicKey)).toString(CryptoJS.enc.Hex);
-
-                // Perform RIPEMD-160 hashing on the result of SHA-256
-                const ripemd160Hash = CryptoJS.RIPEMD160(CryptoJS.enc.Hex.parse(sha256Hash)).toString(CryptoJS.enc.Hex);
-
-                // Add network byte (0x00 for mainnet)
-                const networkByte = '00';
-                const extendedRipemd160 = networkByte + ripemd160Hash;
-
-                // Compute checksum: SHA-256 twice
-                const firstSHA = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(extendedRipemd160)).toString(CryptoJS.enc.Hex);
-                const secondSHA = CryptoJS.SHA256(CryptoJS.enc.Hex.parse(firstSHA)).toString(CryptoJS.enc.Hex);
-                const checksum = secondSHA.substring(0, 8); // First 4 bytes (8 hex chars)
-
-                // Concatenate extended RIPEMD-160 hash with checksum
-                const binaryAddress = extendedRipemd160 + checksum;
-
-                // Convert hex string to byte array
-                const addressBytes = hexToBytes(binaryAddress);
-
-                // Convert to Base58
-                const btcAddress = base58Encode(addressBytes);
-
-                displayDiv.textContent = `Bitcoin Address: ${btcAddress}`;
-
-                // If checkBalance is enabled, fetch and display the balance
-                if (checkBalance) {
-                    // Check if custom API is used
-                    const useCustomApi = document.getElementById('useCustomApi').checked;
-                    let customApiUrl = null;
-                    let customApiKey = null;
-                    if (useCustomApi) {
-                        customApiUrl = document.getElementById('customApiUrl').value.trim();
-                        customApiKey = document.getElementById('customApiKey').value.trim();
-                        if (!customApiUrl || !customApiKey) {
-                            balanceDiv.textContent = 'Please provide both Custom API URL and Response JSON Key.';
-                            return;
-                        }
-                    }
-
-                    fetchBalance(btcAddress, customApiUrl, customApiKey).then(balance => {
-                        if (balance === 'Error fetching balance.') {
-                            balanceDiv.textContent = balance;
-                        } else {
-                            balanceDiv.textContent = `Balance: ${balance} BTC`;
-                        }
-                    });
-                } else {
-                    balanceDiv.textContent = '';
-                }
-            } catch (error) {
-                displayDiv.textContent = 'Error generating Bitcoin address.';
-                balanceDiv.textContent = '';
-                console.error(error);
-            }
-        }
-
-        /**
-         * Sets up the auto-update functionality based on the checkbox state.
-         */
-        function setupAutoUpdate() {
-            const autoUpdateCheckbox = document.getElementById('autoUpdate');
-            const inputText = document.getElementById('inputText');
-            const hashTimes = document.getElementById('hashTimes');
-
-            function handleInputChange() {
-                if (autoUpdateCheckbox.checked) {
-                    performHashing();
-                }
-            }
-
-            if (autoUpdateCheckbox.checked) {
-                inputText.addEventListener('input', handleInputChange);
-                hashTimes.addEventListener('input', handleInputChange);
-            } else {
-                inputText.removeEventListener('input', handleInputChange);
-                hashTimes.removeEventListener('input', handleInputChange);
-            }
-        }
-
-        /**
-         * Fetches the number of GitHub stars for the repository and updates the star count.
-         */
-        async function fetchGitHubStars() {
-            const repo = 'ikrahul/SHA256-BTC-Generater'; // Replace with your GitHub repo in the format 'username/repo'
-            const starCountSpans = document.querySelectorAll('#star-count, #footer-star-count');
-            try {
-                const response = await fetch(`https://api.github.com/repos/${repo}`);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const repoData = await response.json();
-                starCountSpans.forEach(span => {
-                    span.textContent = repoData.stargazers_count;
-                });
-            } catch (error) {
-                console.error('Error fetching GitHub stars:', error);
-                starCountSpans.forEach(span => {
-                    span.textContent = 'N/A';
-                });
-            }
-        }
-
-        // Event Listeners
-        document.getElementById('hashButton').addEventListener('click', performHashing);
-
-        document.getElementById('autoUpdate').addEventListener('change', () => {
-            setupAutoUpdate();
-            if (document.getElementById('autoUpdate').checked) {
-                performHashing();
-            }
-        });
-
-        document.getElementById('useCustomApi').addEventListener('change', () => {
-            const customApiInputs = document.querySelector('.custom-api-inputs');
-            if (document.getElementById('useCustomApi').checked) {
-                customApiInputs.style.display = 'block';
-            } else {
-                customApiInputs.style.display = 'none';
-            }
-            // Clear previous custom API inputs when unchecked
-            if (!document.getElementById('useCustomApi').checked) {
-                document.getElementById('customApiUrl').value = '';
-                document.getElementById('customApiKey').value = '';
-            }
-        });
-
-        // Initialize auto-update based on the checkbox state on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            setupAutoUpdate();
-            if (document.getElementById('autoUpdate').checked) {
-                performHashing();
-            }
-
-            // Fetch GitHub stars on page load
-            fetchGitHubStars();
-        });
+        // Initialize Lucide icons
+        lucide.createIcons();
     </script>
 </body>
 </html>
