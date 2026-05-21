@@ -1,27 +1,161 @@
-/* Modernized styles are now handled by Tailwind CSS in index.html */
-/* This file is kept for any custom CSS that Tailwind doesn't easily cover. */
+/* Toolbox101 Custom Styles */
 
-.github-profile-badge {
-    display: inline-block;
-    vertical-align: middle;
+:root {
+    --sidebar-width: 18rem;
 }
 
+[xl-cloak] { display: none !important; }
+
+.glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+    background: rgba(17, 24, 39, 0.8);
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Sidebar Navigation Styling */
+.nav-category {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    padding-left: 0.75rem;
+}
+
+.nav-item {
+    display: flex;
+    items-center: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #64748b;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dark .nav-item {
+    color: #94a3b8;
+}
+
+.nav-item:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
+
+.dark .nav-item:hover {
+    background: #1e293b;
+    color: #60a5fa;
+}
+
+.nav-item.active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.dark .nav-item.active {
+    background: #1e293b;
+    color: #60a5fa;
+    border-right: 2px solid #3b82f6;
+}
+
+/* Tool UI Components */
+.tool-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+}
+
+.dark .tool-card {
+    background: #111827;
+    border-color: #1f2937;
+}
+
+.input-area {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.dark .input-area {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+.input-area:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.output-area {
+    width: 100%;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    min-height: 4rem;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.dark .output-area {
+    background: #020617;
+    border-color: #1e293b;
+    color: #38bdf8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* QR Code centering */
 #qrcode img {
     margin: 0 auto;
-}
-
-/* Custom transitions */
-#customApiInputs.animate-in {
-    animation: animate-in 0.3s ease-out;
-}
-
-@keyframes animate-in {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
