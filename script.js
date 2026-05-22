@@ -7,6 +7,8 @@ const state = {
     currentToolId: null,
     searchQuery: '',
     isMobileMenuOpen: false,
+    isSidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+    collapsedCategories: JSON.parse(localStorage.getItem('collapsedCategories') || '[]'),
     theme: localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 };
 
@@ -18,6 +20,7 @@ const elements = {
     mobileSearch: document.getElementById('mobileSearch'),
     themeToggle: document.getElementById('themeToggle'),
     mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+    sidebarToggle: document.getElementById('sidebarToggle'),
     sidebar: document.getElementById('sidebar'),
     mobileOverlay: document.getElementById('mobileOverlay'),
     toast: document.getElementById('toast'),
@@ -57,10 +60,26 @@ function renderSidebar() {
         );
 
         if (categoryTools.length > 0) {
+            let isCollapsed = state.collapsedCategories.includes(category.id) && !query;
+            const hasActiveTool = categoryTools.some(t => t.id === state.currentToolId);
+
+            if (hasActiveTool && isCollapsed) {
+                isCollapsed = false;
+                state.collapsedCategories = state.collapsedCategories.filter(id => id !== category.id);
+                localStorage.setItem('collapsedCategories', JSON.stringify(state.collapsedCategories));
+            }
+
             const categoryHeading = document.createElement('div');
             categoryHeading.className = 'nav-category';
-            categoryHeading.innerHTML = `<div class="flex items-center gap-2"><i data-lucide="${category.icon}" class="w-3 h-3"></i> ${category.name}</div>`;
+            categoryHeading.innerHTML = `
+                <div class="flex items-center gap-2"><i data-lucide="${category.icon}" class="w-3 h-3"></i> ${category.name}</div>
+                <i data-lucide="${isCollapsed ? 'chevron-right' : 'chevron-down'}" class="w-3 h-3 transition-transform"></i>
+            `;
+            categoryHeading.onclick = () => toggleCategory(category.id);
             elements.sidebarNav.appendChild(categoryHeading);
+
+            const categoryContent = document.createElement('div');
+            categoryContent.className = `category-content ${isCollapsed ? 'collapsed' : ''}`;
 
             categoryTools.forEach(tool => {
                 const toolItem = document.createElement('div');
@@ -70,11 +89,22 @@ function renderSidebar() {
                     <span class="truncate">${tool.title}</span>
                 `;
                 toolItem.onclick = () => loadTool(tool.id);
-                elements.sidebarNav.appendChild(toolItem);
+                categoryContent.appendChild(toolItem);
             });
+            elements.sidebarNav.appendChild(categoryContent);
         }
     });
     lucide.createIcons();
+}
+
+function toggleCategory(categoryId) {
+    if (state.collapsedCategories.includes(categoryId)) {
+        state.collapsedCategories = state.collapsedCategories.filter(id => id !== categoryId);
+    } else {
+        state.collapsedCategories.push(categoryId);
+    }
+    localStorage.setItem('collapsedCategories', JSON.stringify(state.collapsedCategories));
+    renderSidebar();
 }
 
 // --- Tool Loading ---
@@ -147,6 +177,12 @@ function setupEventListeners() {
 
     elements.mobileMenuBtn.addEventListener('click', toggleMobileMenu);
     elements.mobileOverlay.addEventListener('click', toggleMobileMenu);
+
+    elements.sidebarToggle.addEventListener('click', () => {
+        state.isSidebarCollapsed = !state.isSidebarCollapsed;
+        localStorage.setItem('sidebarCollapsed', state.isSidebarCollapsed);
+        applySidebarState();
+    });
 }
 
 // --- Theme Management ---
@@ -156,6 +192,18 @@ function applyTheme() {
     } else {
         document.documentElement.classList.remove('dark');
     }
+    applySidebarState();
+}
+
+function applySidebarState() {
+    if (state.isSidebarCollapsed) {
+        elements.sidebar.classList.add('lg:hidden');
+        elements.sidebarToggle.innerHTML = '<i data-lucide="panel-left-open" class="w-6 h-6"></i>';
+    } else {
+        elements.sidebar.classList.remove('lg:hidden');
+        elements.sidebarToggle.innerHTML = '<i data-lucide="panel-left-close" class="w-6 h-6"></i>';
+    }
+    lucide.createIcons();
 }
 
 // --- Mobile Menu ---
