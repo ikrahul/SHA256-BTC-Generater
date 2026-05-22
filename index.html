@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<!-- Author: Rahul Ban rahulban@live.in-->
-<!-- Github: https://github.com/ikrahul/SHA256-BTC-Generater-->
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHA-256 Hasher & Bitcoin Address Generator</title>
+    <title>Toolbox101 - Ultimate Dev & Security Toolbox</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,222 +44,130 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <link rel="stylesheet" href="style.css">
-
-    <style>
-        [xl-cloak] { display: none !important; }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .dark .glass {
-            background: rgba(17, 24, 39, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .transition-all-300 {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-    </style>
 </head>
 <body class="bg-slate-50 dark:bg-gray-900 text-slate-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
 
     <!-- Header -->
     <header class="fixed top-0 w-full z-50 glass shadow-sm border-b border-slate-200 dark:border-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center gap-3">
-                    <div class="github-profile-badge scale-75 sm:scale-100" data-user="ikrahul"></div>
-                    <span class="font-bold text-lg hidden sm:inline-block tracking-tight text-primary-600 dark:text-primary-400">SHA256-BTC</span>
+                    <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-gray-800">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center text-white font-bold">T</div>
+                        <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Toolbox<span class="text-primary-600">101</span></span>
+                    </div>
+                </div>
+
+                <div class="flex-grow max-w-md mx-8 hidden md:block">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-slate-400"></i>
+                        </div>
+                        <input type="text" id="globalSearch" placeholder="Search 100+ tools... (Cmd+K)"
+                            class="block w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-primary-500 text-sm">
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 transition-colors" title="Toggle Theme">
+                    <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-gray-800 transition-colors" title="Toggle Theme">
                         <i data-lucide="sun" class="hidden dark:block w-5 h-5"></i>
                         <i data-lucide="moon" class="block dark:hidden w-5 h-5"></i>
                     </button>
-
-                    <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900 dark:bg-gray-100 text-white dark:text-slate-900 text-sm font-medium hover:bg-slate-800 dark:hover:bg-gray-200 transition-all shadow-sm">
-                        <i data-lucide="github" class="w-4 h-4"></i>
-                        <span id="star-count">0</span>
-                        <span class="hidden xs:inline">Stars</span>
+                    <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-gray-800">
+                        <i data-lucide="github" class="w-5 h-5"></i>
                     </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
-        <div class="text-center mb-10">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
-                SHA-256 Hasher & BTC Generator
-            </h1>
-            <p class="text-slate-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
-                Securely generate hashes and Bitcoin addresses entirely in your browser.
-            </p>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-slate-200 dark:border-gray-700 p-6 sm:p-8 space-y-6">
-            <!-- Input Section -->
-            <div class="space-y-2">
-                <label for="inputText" class="block text-sm font-semibold text-slate-700 dark:text-gray-300">Text to Hash</label>
-                <div class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="type" class="h-5 w-5 text-slate-400 group-focus-within:text-primary-500 transition-colors"></i>
+    <div class="flex flex-grow pt-16">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 pt-16 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-white dark:bg-gray-900 border-r border-slate-200 dark:border-gray-800 lg:static">
+            <div class="h-full flex flex-col">
+                <!-- Mobile Search -->
+                <div class="p-4 md:hidden">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-4 w-4 text-slate-400"></i>
+                        </div>
+                        <input type="text" id="mobileSearch" placeholder="Search tools..."
+                            class="block w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-gray-800 border-none rounded-xl focus:ring-2 focus:ring-primary-500 text-sm">
                     </div>
-                    <input type="text" id="inputText"
-                        class="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-gray-900 border border-slate-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 transition-all sm:text-sm text-slate-900 dark:text-white"
-                        placeholder="Enter your passphrase or text here">
+                </div>
+
+                <nav id="sidebarNav" class="flex-grow overflow-y-auto p-4 space-y-6 custom-scrollbar">
+                    <!-- Categories and Tools will be injected here -->
+                </nav>
+
+                <div class="p-4 border-t border-slate-200 dark:border-gray-800">
+                    <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-2 text-center">Version 2.0.0</p>
                 </div>
             </div>
+        </aside>
 
-            <!-- Controls Row -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end">
-                <div class="space-y-2">
-                    <label for="hashTimes" class="block text-sm font-semibold text-slate-700 dark:text-gray-300">Hashing Iterations</label>
-                    <input type="number" id="hashTimes" min="1" value="1"
-                        class="block w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-slate-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-400 transition-all sm:text-sm text-slate-900 dark:text-white">
-                </div>
-
-                <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-gray-900 rounded-xl border border-dashed border-slate-300 dark:border-gray-600">
-                    <input type="checkbox" id="autoUpdate" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                    <label for="autoUpdate" class="text-sm font-medium text-slate-600 dark:text-gray-400 cursor-pointer">Auto-update</label>
-                </div>
-
-                <div class="flex items-center space-x-3 p-3 bg-slate-50 dark:bg-gray-900 rounded-xl border border-dashed border-slate-300 dark:border-gray-600">
-                    <input type="checkbox" id="checkBalance" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                    <label for="checkBalance" class="text-sm font-medium text-slate-600 dark:text-gray-400 cursor-pointer">Check Balance</label>
-                </div>
-            </div>
-
-            <!-- Custom API Section -->
-            <div class="border-t border-slate-100 dark:border-gray-700 pt-6">
-                <div class="flex items-center space-x-3 mb-4">
-                    <input type="checkbox" id="useCustomApi" class="w-5 h-5 text-primary-600 border-gray-300 rounded focus:ring-primary-500">
-                    <label for="useCustomApi" class="text-sm font-semibold text-slate-700 dark:text-gray-300 cursor-pointer">Use Custom API for Balance</label>
-                </div>
-
-                <div id="customApiInputs" class="hidden space-y-4 animate-in slide-in-from-top-2 duration-300">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label for="customApiUrl" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">API URL Template</label>
-                            <input type="text" id="customApiUrl" placeholder="https://api.example.com/balance?address=${address}"
-                                class="block w-full px-4 py-2 bg-slate-50 dark:bg-gray-900 border border-slate-200 dark:border-gray-600 rounded-lg text-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label for="customApiKey" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">JSON Key</label>
-                            <input type="text" id="customApiKey" placeholder="balance"
-                                class="block w-full px-4 py-2 bg-slate-50 dark:bg-gray-900 border border-slate-200 dark:border-gray-600 rounded-lg text-sm">
-                        </div>
+        <!-- Main Content -->
+        <main class="flex-grow overflow-y-auto bg-slate-50 dark:bg-gray-950 p-4 sm:p-6 lg:p-8 custom-scrollbar">
+            <div id="toolContent" class="max-w-5xl mx-auto animate-in fade-in duration-500">
+                <!-- Dynamic tool UI will be injected here -->
+                <div id="welcomeScreen" class="flex flex-col items-center justify-center min-h-[60vh] text-center">
+                    <div class="w-20 h-20 bg-primary-100 dark:bg-primary-900/30 rounded-2xl flex items-center justify-center mb-6">
+                        <i data-lucide="wrench" class="w-10 h-10 text-primary-600 dark:text-primary-400"></i>
                     </div>
-                </div>
-            </div>
-
-            <button id="hashButton" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary-500/30 transform active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 group">
-                <i data-lucide="hash" class="w-5 h-5 group-hover:rotate-12 transition-transform"></i>
-                Generate Results
-            </button>
-
-            <!-- Results Section -->
-            <div id="resultsArea" class="space-y-6 pt-6 border-t border-slate-100 dark:border-gray-700">
-
-                <!-- Hash Result -->
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">SHA-256 Hash / Private Key</span>
-                        <button onclick="copyToClipboard('result')" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium flex items-center gap-1 transition-colors">
-                            <i data-lucide="copy" class="w-3 h-3"></i> Copy
-                        </button>
-                    </div>
-                    <div id="result" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm break-all border border-slate-200 dark:border-gray-700 min-h-[3rem] flex items-center">
-                        Waiting for input...
-                    </div>
-                </div>
-
-                <!-- BTC Address Result -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="md:col-span-2 space-y-2">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Bitcoin Address (Mainnet)</span>
-                            <button onclick="copyToClipboard('btcAddress')" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-xs font-medium flex items-center gap-1 transition-colors">
-                                <i data-lucide="copy" class="w-3 h-3"></i> Copy
-                            </button>
-                        </div>
-                        <div id="btcAddress" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm break-all border border-slate-200 dark:border-gray-700 min-h-[3rem] flex items-center">
-                            Address will appear here...
-                        </div>
-
-                        <div class="space-y-2 pt-2">
-                            <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider">Balance</span>
-                            <div id="btcBalance" class="p-4 bg-slate-50 dark:bg-gray-900 rounded-xl font-mono text-sm border border-slate-200 dark:border-gray-700 flex items-center gap-2">
-                                <span class="text-slate-400 italic">Not checked</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-gray-700 space-y-3">
-                        <span class="text-xs font-bold text-slate-500 dark:text-gray-400 uppercase tracking-wider text-center w-full">QR Code</span>
-                        <div id="qrcode" class="bg-white p-2 rounded-lg shadow-inner"></div>
-                        <span class="text-[10px] text-slate-400 text-center">Scan to receive BTC</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Warning Section -->
-        <div class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900/50 rounded-xl flex gap-3">
-            <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-600 dark:text-amber-500 shrink-0"></i>
-            <p class="text-sm text-amber-800 dark:text-amber-200">
-                <span class="font-bold">Security Note:</span> This tool is for educational purposes.
-                Always use hardware wallets or trusted software for significant funds.
-                Keep your passphrases private.
-            </p>
-        </div>
-    </main>
-
-    <footer class="mt-auto border-t border-slate-200 dark:border-gray-800 glass py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="text-center md:text-left">
-                    <p class="text-sm text-slate-600 dark:text-gray-400">
-                        🚀 Created with ❤️ by <span class="font-semibold text-slate-900 dark:text-white">Rahul Ban</span> © 2024
+                    <h2 class="text-3xl font-bold mb-4">Welcome to Toolbox101</h2>
+                    <p class="text-slate-600 dark:text-gray-400 max-w-md mb-8">
+                        The ultimate collection of 100+ developer utilities, security tools, and cryptography helpers.
                     </p>
-                    <div class="mt-2 flex items-center justify-center md:justify-start gap-2">
-                        <span class="text-xs text-slate-500">Support:</span>
-                        <a href="bitcoin:1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG" class="text-xs font-mono text-primary-600 dark:text-primary-400 hover:underline">
-                            1PqDbd9XRmEGfwYK6rnsYYTshdb3PguKuG
-                        </a>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+                        <div class="p-4 bg-white dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-gray-800 text-left">
+                            <i data-lucide="zap" class="w-5 h-5 text-amber-500 mb-2"></i>
+                            <h3 class="font-bold mb-1">Fast & Secure</h3>
+                            <p class="text-xs text-slate-500">All tools run 100% client-side. Your data never leaves your browser.</p>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-gray-900 rounded-xl border border-slate-200 dark:border-gray-800 text-left">
+                            <i data-lucide="search" class="w-5 h-5 text-blue-500 mb-2"></i>
+                            <h3 class="font-bold mb-1">Easy Navigation</h3>
+                            <p class="text-xs text-slate-500">Use Cmd+K to quickly find and switch between tools.</p>
+                        </div>
                     </div>
                 </div>
-
-                <div class="flex items-center gap-4">
-                    <a href="https://github.com/ikrahul/SHA256-BTC-Generater" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-gray-800 text-slate-700 dark:text-gray-300 text-sm font-medium hover:bg-slate-200 dark:hover:bg-gray-700 transition-all border border-slate-200 dark:border-gray-700">
-                        <i data-lucide="github" class="w-4 h-4"></i>
-                        <span id="footer-star-count">0</span> Stars
-                    </a>
-                </div>
             </div>
-        </div>
-    </footer>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden lg:hidden"></div>
 
     <!-- Notification Toast -->
     <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
         <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
             <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
-            <span id="toastMessage" class="text-sm font-medium">Copied to clipboard!</span>
+            <span id="toastMessage" class="text-sm font-medium">Copied!</span>
         </div>
     </div>
 
     <!-- Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/5.1.0/diff.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.7/beautify-html.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ulid@2.3.0/dist/index.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/UAParser.js/1.0.35/ua-parser.min.js"></script>
+    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
+
+    <!-- App Scripts -->
+    <script src="registry.js"></script>
+    <script src="tools.js"></script>
     <script src="script.js"></script>
     <script>
-        // Initialize Lucide icons
         lucide.createIcons();
     </script>
 </body>
